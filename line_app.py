@@ -37,6 +37,34 @@ handler = WebhookHandler('YOUR_CHANNEL_SECRET')
 
 ############# Set about the environment #############
 
+############# Crawl the data #############
+
+# Store the fund
+fund_map_dict = {}
+
+# Init the fund list (The case use 'dict',or use 'google sheet' too.)
+
+
+def init_fund_list():
+    # Sent the request to get the URL
+    resp = requests.get(
+        'https://www.sitca.org.tw/ROC/Industry/IN2421.aspx?txtMonth=02&txtYear=2020', headers=headers)
+    # BeautifulSoup the object
+    soup = BeautifulSoup(resp.text, 'html.parser')
+    # Select the fund list
+    table_content = soup.select('#ctl00_ContentPlaceHolder1_TableClassList')[0]
+    # Select the fund list about 'a'
+    fund_links = table_content.select('a')
+
+    # Get the fund_links text
+    for fund_link in fund_links:
+        if fund_link.text:
+            fund_name = fund_link.text
+            fund_group_id = fund_link['href'].split('txtGROUPID=')[1]
+            fund_map_dict[fund_name] = fund_group_id
+
+############# Crawl the data #############
+
 
 @app.route("/callback", methods=['POST'])
 def callback():
