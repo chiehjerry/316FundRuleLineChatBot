@@ -1,5 +1,4 @@
 ############# Load the packages #############
-
 ### Crawl packages ###
 import requests
 import pandas as pd
@@ -31,9 +30,9 @@ app = Flask(__name__)
 headers = {
     "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Mobile Safari/537.36"
 }
-
-line_bot_api = LineBotApi('YOUR_CHANNEL_ACCESS_TOKEN')
-handler = WebhookHandler('YOUR_CHANNEL_SECRET')
+# LINE_CHANNEL_SECRET and LINE_CHANNEL_ACCESS_TOKEN
+line_bot_api = LineBotApi('LINE_CHANNEL_ACCESS_TOKEN')
+handler = WebhookHandler('LINE_CHANNEL_SECRET')
 
 ############# Set about the environment #############
 
@@ -133,14 +132,22 @@ def fetch_fund_rule_items(year, month, group_id):
 
 ############# Line chatbot #############
 
+# This is  Webhook callback endpoint
+
+# Welcome function
+@app.route("/", methods=['GET'])
+def hello():
+    return 'hello heroku'
+
 
 @app.route("/callback", methods=['POST'])
 def callback():
-    # get X-Line-Signature header value
+    # Get X-Line-Signature to check the request is from  LINE Server
     signature = request.headers['X-Line-Signature']
 
-    # get request body as text
+    # Get the content of request
     body = request.get_data(as_text=True)
+
     # handle webhook body
     try:
         handler.handle(body, signature)
@@ -149,7 +156,6 @@ def callback():
         abort(400)
 
     return 'OK'
-
 
 # decorator to check the event is  MessageEvent instance ，event.message is TextMessage instance 。so process the handler of TextMessage
 @handler.add(MessageEvent, message=TextMessage)
@@ -174,14 +180,13 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text='請輸入正確指令'))
 
+############# Line chatbox #############
 
-############# Line chatbot #############
 
 ############# Run the app #############
-
+        # __name__ inner variable
 if __name__ == "__main__":
-  # Run Flask server
+    # Run Flask server
     init_fund_list()
     app.run()
-
 ############# Run the app #############
