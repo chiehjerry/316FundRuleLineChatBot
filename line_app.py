@@ -65,6 +65,8 @@ def init_fund_list():
 
 ############# Crawl the data #############
 
+############# Line chatbot #############
+
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -83,12 +85,24 @@ def callback():
     return 'OK'
 
 
+# decorator to check the event is  MessageEvent instance ，event.message is TextMessage instance 。so process the handler of TextMessage
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=event.message.text))
+    # To decide Component to  Channel by TextSendMessage
+    user_input = event.message.text
+    if user_input == '@基金列表':
+        fund_list_str = ''
+        for fund_name in fund_map_dict:
+            fund_list_str += fund_name + '\n'
+        line_bot_api.reply_message(
+            event.reply_token, TextSendMessage(text=fund_list_str))
+
+############# Line chatbot #############
+
+############# Run the app #############
 
 
 if __name__ == "__main__":
     app.run()
+
+############# Run the app #############
