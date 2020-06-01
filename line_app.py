@@ -1,5 +1,11 @@
 ############# Load the packages #############
 
+### Crawl packages ###
+import requests
+import pandas as pd
+from bs4 import BeautifulSoup
+### Crawl packages ###
+
 ### Line chatbot packages ###
 # Load the flask
 from flask import Flask, request, abort
@@ -18,10 +24,18 @@ from linebot.models import (
 ### Line chatbot packages ###
 ############# Load the packages #############
 
+############# Set about the environment #############
+
 app = Flask(__name__)
+
+headers = {
+    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Mobile Safari/537.36"
+}
 
 line_bot_api = LineBotApi('YOUR_CHANNEL_ACCESS_TOKEN')
 handler = WebhookHandler('YOUR_CHANNEL_SECRET')
+
+############# Set about the environment #############
 
 
 @app.route("/callback", methods=['POST'])
